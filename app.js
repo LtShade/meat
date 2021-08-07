@@ -3,7 +3,8 @@ const morgan = require("morgan");
 const sampleRouter = require("./routes/sampleRouter");
 
 const hostname = "0.0.0.0";
-const port = 3000;
+const port = "8080";
+//const port = process.env.SERVER_PORT;
 
 const app = express();
 app.all("*", (req, res, next) => {
