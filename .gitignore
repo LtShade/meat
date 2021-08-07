@@ -102,3 +102,8 @@ dist
 
 # TernJS port file
 .tern-port
+
+# bin
+bin/server.key
+bin/server.cert
+config.js
