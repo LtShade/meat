@@ -1,3 +1,8 @@
+# Configuration
+config.js
+scratch
+
+
 # Logs
 logs
 *.log
@@ -106,4 +111,8 @@ dist
 # bin
 bin/server.key
 bin/server.cert
-config.js
+
+
+# bash commands for the lazy
+# docker build --tag meat .
+# docker-compose -f docker-compose.dev.yml up --build
