@@ -1,26 +1,32 @@
 const express = require("express");
 const morgan = require("morgan");
 const config = require("./config");
+const mongoose = require("mongoose");
 
+//Establish routes
 const adminRouter = require("./routes/adminRouter");
+
+//Shortcut parameters into constants
 const url = process.env.CONNECTIONSTRING;
 const dbname = config.dbname;
 const hostname = config.hostname;
 const port = config.port;
 
-/* MongoClient.connect(url, { useUnifiedTopology: true })
-	.then((client) => {
-		console.log("Server connection successful.");
-		console.log(client);
-	})
-	.catch((err) => console.log(err)); */
-/* const mongoose = require("mongoose");
-const url = config.mongoUrl;
-const connect = mongoose.connect(url, {});
- */
+//Initiate mongoose connection to Mongo database
+const connect = mongoose.connect(url, {
+	useCreateIndex: true,
+	useFindAndModify: false,
+	useNewUrlParser: true,
+	useUnifiedTopology: true,
+});
 
-const app = express();
+connect.then(
+	() => console.log("Connected correctly to server"),
+	(err) => console.log(err)
+);
 
+var app = express();
+//Secure connection
 app.all("*", (req, res, next) => {
 	if (req.secure) {
 		return next();
@@ -37,7 +43,7 @@ app.all("*", (req, res, next) => {
 
 app.use(morgan("dev"));
 app.use(express.json());
-
+//Use routes
 app.use("/admin", adminRouter);
 
 app.use(express.static(__dirname + "/public"));

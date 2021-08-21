@@ -1,28 +1,40 @@
 const express = require("express");
-const MongoClient = require("mongodb").MongoClient;
+const Primary = require("../models/primary");
 const adminRouter = express.Router();
 
 adminRouter
 	.route("/")
-	.all((req, res, next) => {
-		res.statusCode = 200;
-		res.setHeader("Content-Type", "text/plain");
-		next();
+	.get((req, res, next) => {
+		Primary.find()
+			.then((records) => {
+				res.statusCode = 200;
+				res.setHeader("Content-Type", "application/json");
+				res.json(records);
+			})
+			.catch((err) => next(err));
 	})
-	.get((req, res) => {
-		res.end("GET operation supported on /addmin");
+	.post((req, res, next) => {
+		Primary.create(req.body)
+			.then((record) => {
+				console.log("Created record: ", record);
+				res.statusCode = 200;
+				res.setHeader("Content-Type", "application/json");
+				res.json(record);
+			})
+			.catch((err) => next(err));
 	})
-	.post((req, res) => {
-		res.end(
-			`Will add the addmin: ${req.body.name} with description: ${req.body.description}`
-		);
-	})
-	.put((req, res) => {
+	.put((req, res, next) => {
 		res.statusCode = 403;
-		res.end("PUT operation supported on /addmin");
+		res.end("PUT operation supported on /admin");
 	})
-	.delete((req, res) => {
-		res.end("Delete addmins");
+	.delete((req, res, next) => {
+		Primary.deleteMany()
+			.then((response) => {
+				res.statusCode = 200;
+				res.setHeader("Content-Type", "application/json");
+				res.json(response);
+			})
+			.catch((err) => next(err));
 	});
 
 module.exports = adminRouter;
