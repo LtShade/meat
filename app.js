@@ -2,9 +2,12 @@ const express = require("express");
 const morgan = require("morgan");
 const config = require("./config");
 const mongoose = require("mongoose");
+const passport = require("passport");
+var createError = require("http-errors");
 
 //Establish routes
 const adminRouter = require("./routes/adminRouter");
+const loginRouter = require("./routes/loginRouter");
 
 //Shortcut parameters into constants
 const url = process.env.CONNECTIONSTRING;
@@ -43,8 +46,12 @@ app.all("*", (req, res, next) => {
 
 app.use(morgan("dev"));
 app.use(express.json());
+
+app.use(passport.initialize());
+
 //Use routes
 app.use("/admin", adminRouter);
+app.use("/login", loginRouter);
 
 app.use(express.static(__dirname + "/public"));
 
