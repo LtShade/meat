@@ -2,13 +2,13 @@ const express = require("express");
 const User = require("../models/user");
 const passport = require("passport");
 const authenticate = require("../authenticate");
-const loginRouter = express.Router();
+const userRouter = express.Router();
 
-loginRouter.get("/", (req, res, next) => {
+userRouter.get("/", (req, res, next) => {
 	res.send("respond with a resource");
 });
 
-loginRouter.post("/signup", (req, res) => {
+userRouter.post("/signup", (req, res) => {
 	User.register(
 		new User({ username: req.body.username }),
 		req.body.password,
@@ -36,7 +36,7 @@ loginRouter.post("/signup", (req, res) => {
 	);
 });
 
-loginRouter.post("/login", passport.authenticate("local"), (req, res) => {
+userRouter.post("/login", passport.authenticate("local"), (req, res) => {
 	const token = authenticate.getToken({ _id: req.user._id });
 	res.statusCode = 200;
 	res.setHeader("Content-Type", "application/json");
@@ -47,7 +47,7 @@ loginRouter.post("/login", passport.authenticate("local"), (req, res) => {
 	});
 });
 
-loginRouter.get("/logout", (req, res, next) => {
+userRouter.get("/logout", (req, res, next) => {
 	if (req.session) {
 		req.session.destroy();
 		res.clearCookie("session-id");
@@ -59,4 +59,4 @@ loginRouter.get("/logout", (req, res, next) => {
 	}
 });
 
-module.exports = loginRouter;
+module.exports = userRouter;

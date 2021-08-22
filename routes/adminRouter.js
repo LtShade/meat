@@ -6,7 +6,7 @@ const authenticate = require("../authenticate");
 
 adminRouter
 	.route("/")
-	.get((req, res, next) => {
+	.get(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
 		Primary.find()
 			.then((records) => {
 				res.statusCode = 200;
@@ -66,6 +66,32 @@ adminRouter
 				res.statusCode = 200;
 				res.setHeader("Content-Type", "application/json");
 				res.json(response);
+			})
+			.catch((err) => next(err));
+	});
+adminRouter
+	.route("/users/:userId")
+	.get((req, res, next) => {
+		User.findById(req.params.userId)
+			.then((records) => {
+				res.statusCode = 200;
+				res.setHeader("Content-Type", "application/json");
+				res.json(records);
+			})
+			.catch((err) => next(err));
+	})
+	.put((req, res, next) => {
+		User.findByIdAndUpdate(
+			req.params.userId,
+			{
+				$set: req.body,
+			},
+			{ new: true }
+		)
+			.then((promotion) => {
+				res.statusCode = 200;
+				res.setHeader("Content-Type", "application/json");
+				res.json(promotion);
 			})
 			.catch((err) => next(err));
 	});
