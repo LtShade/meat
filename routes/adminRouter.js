@@ -15,7 +15,7 @@ adminRouter
 			})
 			.catch((err) => next(err));
 	})
-	.post((req, res, next) => {
+	.post(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
 		Primary.create(req.body)
 			.then((record) => {
 				console.log("Created record: ", record);
@@ -25,23 +25,27 @@ adminRouter
 			})
 			.catch((err) => next(err));
 	})
-	.put((req, res, next) => {
+	.put(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
 		res.statusCode = 403;
-		res.end("PUT operation supported on /admin");
+		res.end("PUT operation not supported on /admin");
 	})
-	.delete((req, res, next) => {
-		Primary.deleteMany()
-			.then((response) => {
-				res.statusCode = 200;
-				res.setHeader("Content-Type", "application/json");
-				res.json(response);
-			})
-			.catch((err) => next(err));
-	});
+	.delete(
+		authenticate.verifyUser,
+		authenticate.verifyAdmin,
+		(req, res, next) => {
+			Primary.deleteMany()
+				.then((response) => {
+					res.statusCode = 200;
+					res.setHeader("Content-Type", "application/json");
+					res.json(response);
+				})
+				.catch((err) => next(err));
+		}
+	);
 
 adminRouter
 	.route("/users")
-	.get((req, res, next) => {
+	.get(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
 		User.find()
 			.then((records) => {
 				res.statusCode = 200;
@@ -50,7 +54,7 @@ adminRouter
 			})
 			.catch((err) => next(err));
 	})
-	.post((req, res, next) => {
+	.post(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
 		User.create(req.body)
 			.then((record) => {
 				console.log("Created record: ", record);
@@ -60,18 +64,22 @@ adminRouter
 			})
 			.catch((err) => next(err));
 	})
-	.delete((req, res, next) => {
-		User.deleteMany()
-			.then((response) => {
-				res.statusCode = 200;
-				res.setHeader("Content-Type", "application/json");
-				res.json(response);
-			})
-			.catch((err) => next(err));
-	});
+	.delete(
+		authenticate.verifyUser,
+		authenticate.verifyAdmin,
+		(req, res, next) => {
+			User.deleteMany()
+				.then((response) => {
+					res.statusCode = 200;
+					res.setHeader("Content-Type", "application/json");
+					res.json(response);
+				})
+				.catch((err) => next(err));
+		}
+	);
 adminRouter
 	.route("/users/:userId")
-	.get((req, res, next) => {
+	.get(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
 		User.findById(req.params.userId)
 			.then((records) => {
 				res.statusCode = 200;
@@ -80,7 +88,7 @@ adminRouter
 			})
 			.catch((err) => next(err));
 	})
-	.put((req, res, next) => {
+	.put(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
 		User.findByIdAndUpdate(
 			req.params.userId,
 			{
@@ -88,23 +96,12 @@ adminRouter
 			},
 			{ new: true }
 		)
-			.then((promotion) => {
+			.then((document) => {
 				res.statusCode = 200;
 				res.setHeader("Content-Type", "application/json");
-				res.json(promotion);
+				res.json(document);
 			})
 			.catch((err) => next(err));
 	});
-
-adminRouter.route("/login").get((req, res, next) => {
-	const token = authenticate.getToken({ _id: req.user._id });
-	res.statusCode = 200;
-	res.setHeader("Content-Type", "application/json");
-	res.json({
-		success: true,
-		token: token,
-		status: "You are successfully logged in!",
-	});
-});
 
 module.exports = adminRouter;

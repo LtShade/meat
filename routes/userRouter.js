@@ -4,6 +4,7 @@ const passport = require("passport");
 const authenticate = require("../authenticate");
 const userRouter = express.Router();
 
+//Simple testing.
 userRouter.get("/", (req, res, next) => {
 	res.send("respond with a resource");
 });

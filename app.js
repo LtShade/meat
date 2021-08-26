@@ -8,6 +8,7 @@ var createError = require("http-errors");
 //Establish routes
 const adminRouter = require("./routes/adminRouter");
 const userRouter = require("./routes/userRouter");
+const catalogRouter = require("./routes/catalogRouter");
 
 //Shortcut parameters into constants
 const url = process.env.CONNECTIONSTRING;
@@ -52,6 +53,7 @@ app.use(passport.initialize());
 //Use routes
 app.use("/admin", adminRouter);
 app.use("/user", userRouter);
+app.use("/catalog", catalogRouter);
 
 app.use(express.static(__dirname + "/public"));
 
